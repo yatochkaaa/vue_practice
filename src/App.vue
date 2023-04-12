@@ -7,11 +7,13 @@
     <my-dialog v-model:show="isDialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
-    <post-list :posts="posts" @remove="removePost" />
+    <post-list v-if="!isPostsLoading" :posts="posts" @remove="removePost" />
+    <div v-else>Идёт загрузка...</div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import PostForm from "@/components/PostForm.vue";
 import PostList from "@/components/PostList.vue";
 
@@ -23,35 +25,9 @@ export default {
 
   data() {
     return {
-      posts: [
-        {
-          id: 1,
-          title:
-            "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-          body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto",
-        },
-        {
-          id: 2,
-          title: "qui est esse",
-          body: "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla",
-        },
-        {
-          id: 3,
-          title: "ea molestias quasi exercitationem repellat qui ipsa sit aut",
-          body: "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut",
-        },
-        {
-          id: 4,
-          title: "eum et est occaecati",
-          body: "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit",
-        },
-        {
-          id: 5,
-          title: "nesciunt quas odio",
-          body: "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque",
-        },
-      ],
+      posts: [],
       isDialogVisible: false,
+      isPostsLoading: false,
     };
   },
 
@@ -66,6 +42,22 @@ export default {
     showDialog() {
       this.isDialogVisible = true;
     },
+    async fetchPosts() {
+      try {
+        this.isPostsLoading = true;
+        const res = await axios.get(
+          "https://jsonplaceholder.typicode.com/posts?_limit=10"
+        );
+        this.posts = res.data;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.isPostsLoading = false;
+      }
+    },
+  },
+  mounted() {
+    this.fetchPosts();
   },
 };
 </script>
