@@ -4,7 +4,11 @@
   </button>
 </template>
 
-<script></script>
+<script>
+export default {
+  name: "my-button",
+};
+</script>
 
 <style scoped>
 .btn {

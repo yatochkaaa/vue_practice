@@ -1,16 +1,13 @@
 <template>
   <form @submit.prevent>
     <h4>Создание поста</h4>
-    <input
+    <my-input
       v-model="post.title"
-      class="input"
       type="text"
       placeholder="Название"
     />
-    <input
+    <my-input
       v-model="post.body"
-      @input="post.body = $event.target.value"
-      class="input"
       type="text"
       placeholder="Описание"
     />
@@ -24,13 +21,7 @@
 </template>
 
 <script>
-import MyButton from "@/components/UI/MyButton.vue";
-
 export default {
-  components: {
-    MyButton,
-  },
-
   data() {
     return {
       post: {
@@ -57,12 +48,5 @@ export default {
 form {
   display: flex;
   flex-direction: column;
-}
-
-.input {
-  width: 100%;
-  border: 1px solid teal;
-  padding: 8px 12px;
-  margin-top: 12px;
 }
 </style>
