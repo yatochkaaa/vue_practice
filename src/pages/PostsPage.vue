@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Страница с постами</h1>
-    <my-input v-model="searchQuery" />
+    <my-input v-model="searchQuery" placeholder="Поиск..." v-focus />
     <div class="app__btns">
       <my-button @click="showDialog">Создать пост</my-button>
       <my-select v-model="selectedSort" :options="sortOptions" />
@@ -15,12 +15,13 @@
       @remove="removePost"
     />
     <div v-else>Идёт загрузка...</div>
-    <my-pagination
+    <div v-intersection="loadMorePosts" class="observer"></div>
+    <!-- <my-pagination
       @update="changePage"
       style="margin-top: 16px"
       :totalPages="totalPages"
       :page="page"
-    />
+    /> -->
   </div>
 </template>
 
@@ -63,9 +64,9 @@ export default {
     showDialog() {
       this.isDialogVisible = true;
     },
-    changePage(pageNumber) {
-      this.page = pageNumber;
-    },
+    // changePage(pageNumber) {
+    //   this.page = pageNumber;
+    // },
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
@@ -86,15 +87,33 @@ export default {
         this.isPostsLoading = false;
       }
     },
+    async loadMorePosts() {
+      try {
+        this.page += 1;
+        const res = await axios.get(
+          `https://jsonplaceholder.typicode.com/posts`,
+          {
+            params: {
+              _page: this.page,
+              _limit: this.limit,
+            },
+          }
+        );
+        this.totalPages = Math.ceil(res.headers["x-total-count"] / this.limit);
+        this.posts = [...this.posts, ...res.data];
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
   mounted() {
     this.fetchPosts();
   },
-  watch: {
-    page() {
-      this.fetchPosts();
-    },
-  },
+  // watch: {
+  //   page() {
+  //     this.fetchPosts();
+  //   },
+  // },
   computed: {
     sortedPosts() {
       return [...this.posts].sort((post1, post2) =>
