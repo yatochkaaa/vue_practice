@@ -1,13 +1,19 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
-    <my-button @click="showDialog" style="margin: 16px 0"
-      >Создать пост</my-button
-    >
+    <my-input v-model="searchQuery" />
+    <div class="app__btns">
+      <my-button @click="showDialog"> Создать пост </my-button>
+      <my-select v-model="selectedSort" :options="sortOptions" />
+    </div>
     <my-dialog v-model:show="isDialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
-    <post-list v-if="!isPostsLoading" :posts="posts" @remove="removePost" />
+    <post-list
+      v-if="!isPostsLoading"
+      :posts="sortedAndSearchPosts"
+      @remove="removePost"
+    />
     <div v-else>Идёт загрузка...</div>
   </div>
 </template>
@@ -28,6 +34,12 @@ export default {
       posts: [],
       isDialogVisible: false,
       isPostsLoading: false,
+      selectedSort: "",
+      searchQuery: "",
+      sortOptions: [
+        { value: "title", name: "По названию" },
+        { value: "body", name: "По описанию" },
+      ],
     };
   },
 
@@ -59,6 +71,25 @@ export default {
   mounted() {
     this.fetchPosts();
   },
+  // watch: {
+  //   selectedSort(newValue) {
+  //     this.posts.sort((post1, post2) =>
+  //       post1[newValue].localeCompare(post2[newValue])
+  //     );
+  //   },
+  // },
+  computed: {
+    sortedPosts() {
+      return [...this.posts].sort((post1, post2) =>
+        post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      );
+    },
+    sortedAndSearchPosts() {
+      return this.sortedPosts.filter((post) =>
+        post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    },
+  },
 };
 </script>
 
@@ -71,5 +102,11 @@ export default {
 
 .app {
   padding: 20px;
+}
+
+.app__btns {
+  margin: 16px 0;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
