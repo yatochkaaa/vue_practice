@@ -3,7 +3,8 @@ import MainPage from "@/pages/MainPage.vue";
 import PostsPage from "@/pages/PostsPage.vue";
 import PostPage from "@/pages/PostPage.vue";
 import AboutPage from "@/pages/AboutPage.vue";
-import PostPageWithStore from "@/pages/PostPageWithStore.vue";
+import PostsPageWithStore from "@/pages/PostsPageWithStore.vue";
+import PostsPageCompositionApi from "@/pages/PostsPageCompositionApi.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,7 +25,11 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/store",
-    component: PostPageWithStore,
+    component: PostsPageWithStore,
+  },
+  {
+    path: "/composition",
+    component: PostsPageCompositionApi,
   },
 ];
 
